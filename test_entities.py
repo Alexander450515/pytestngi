@@ -11,7 +11,7 @@ with open('data.json') as f:
     templates = json.load(f)
 print(templates)
 
-
+# 12
 # def test_create_entity_and_get_code_204():
 #     json_file = ConnectToJSON()
 #     response = requests.post(f"{url}{api}", json=json_file.connect('data.json'))
