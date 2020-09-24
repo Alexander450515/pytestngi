@@ -26,10 +26,10 @@ def test_get_list_entities_and_code_200():
 
 def test_assert():
     json_file = ConnectToJSON()
-    dict1 = json_file.connect('data.json')
+    # dict1 = json_file.connect('data.json')
     response = requests.get(f"{url}{api}")
     response_body = response.json()
-    assert response_body["type"] == dict1["type"]
+    assert response_body["type"] == templates["type"]
 
 
 
