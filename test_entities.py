@@ -12,13 +12,12 @@ with open('data.json') as f:
 print(templates)
 
 
-def test_create_entity_and_get_code_204():
-    json_file = ConnectToJSON()
-    response = requests.post(f"{url}{api}", json=json_file.connect('data.json'))
-    assert response.status_code == 201 or 204
+# def test_create_entity_and_get_code_204():
+#     json_file = ConnectToJSON()
+#     response = requests.post(f"{url}{api}", json=json_file.connect('data.json'))
+#     assert response.status_code == 201 or 204
 
 
-# @pytest.mark.parametrize("api, expected_place_name", test_data_zip_codes)
 def test_get_list_entities_and_code_200():
     response = requests.get(f"{url}{api}")
     assert response.status_code == 200
@@ -29,7 +28,7 @@ def test_assert():
     # dict1 = json_file.connect('data.json')
     response = requests.get(f"{url}{api}")
     response_body = response.json()
-    assert response_body["type"] == templates["type"]
+    assert response_body["type"] == "Room"
 
 
 
