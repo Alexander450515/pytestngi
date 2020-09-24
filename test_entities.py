@@ -5,14 +5,16 @@ import json
 
 api = "/v2/entities"
 url = "http://172.26.66.74:1026"
-# with open('data.json') as f:
-#     templates = json.load(f)
+
+
+with open('data.json') as f:
+    templates = json.load(f)
+print(templates)
 
 
 def test_create_entity_and_get_code_204():
-    t1 = ConnectToJSON()
-    t1.connect('data.json')
-    response = requests.post(f"{url}{api}", json=t1.connect('data.json'))
+    json_file = ConnectToJSON()
+    response = requests.post(f"{url}{api}", json=json_file.connect('data.json'))
     assert response.status_code == 201 or 204
 
 
@@ -22,7 +24,12 @@ def test_get_list_entities_and_code_200():
     assert response.status_code == 200
 
 
-
+def test_assert():
+    json_file = ConnectToJSON()
+    dict1 = json_file.connect('data.json')
+    response = requests.get(f"{url}{api}")
+    response_body = response.json()
+    assert response_body["type"] == dict1["type"]
 
 
 
