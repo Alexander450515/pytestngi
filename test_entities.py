@@ -9,25 +9,68 @@ url = "http://172.26.66.74:1026"
 
 def test_create_entity():
     json_file = ConnectToJSON()
-    templates = json_file.connect('data.json')
-
-    response = requests.post(f"{url}{api}", json=templates)
-    assert response.status_code in (201, 204)
-
-    response = requests.get(f"{url}{api}?id={templates['id']}")
+    templates = json_file.connect('entity_room1.json')
+    # POST запрос /v2/entities
+    # response = requests.post(f"{url}{api}", json=templates)
+    # assert response.status_code in (201, 204)
+    # Проверка корректности создания /v2/entities/{entityId}
+    response = requests.get(f"{url}{api}/{templates['id']}")
     assert response.status_code == 200
     response_body = response.json()
-    assert response_body[0]["type"] == templates["type"]
-    assert response_body[0]["id"] == templates["id"]
-    assert response_body[0]["temperature"]["value"] == templates["temperature"]["value"] and (
-        (type(response_body[0]["temperature"]["value"]) in (float, int)))
-    assert response_body[0]["humidity"]["value"] == templates["humidity"]["value"] and (
+    assert response_body["type"] == templates["type"]
+    assert response_body["id"] == templates["id"]
+    assert response_body["temperature"]["value"] == templates["temperature"]["value"] and (
+        (type(response_body["temperature"]["value"]) in (float, int)))
+    assert response_body["humidity"]["value"] == templates["humidity"]["value"] and (
             (type(templates["humidity"]["value"])) in (float, int))
-    assert response_body[0]["location"]["value"] == templates["location"]["value"]
-    assert response_body[0]["location"]["type"] == templates["location"]["type"]
-    assert response_body[0]["location"]["metadata"]["crs"]["value"] == templates["location"]["metadata"]["crs"]["value"]
+    assert response_body["location"]["value"] == templates["location"]["value"]
+    assert response_body["location"]["type"] == templates["location"]["type"]
+    assert response_body["location"]["metadata"]["crs"]["value"] == templates["location"]["metadata"]["crs"]["value"]
+    # Проверка корректности создания /v2/entities/{entityId}/attrs
+    response = requests.get(f"{url}{api}/{templates['id']}/attrs")
+    assert response.status_code == 200
+    response_body = response.json()
+    assert response_body["temperature"]["value"] == templates["temperature"]["value"] and (
+        (type(response_body["temperature"]["value"]) in (float, int)))
+    assert response_body["humidity"]["value"] == templates["humidity"]["value"] and (
+            (type(templates["humidity"]["value"])) in (float, int))
+    assert response_body["location"]["value"] == templates["location"]["value"]
+    assert response_body["location"]["type"] == templates["location"]["type"]
+    assert response_body["location"]["metadata"]["crs"]["value"] == templates["location"]["metadata"]["crs"]["value"]
 
-    # def test_get_check_content_type_equals_json():
+
+
+def test_replace_all_entity_attributes():
+    json_file = ConnectToJSON()
+    templates = json_file.connect('entity_room1.json')
+
+    response = requests.put(f"{url}{api}/{templates['id']}/attrs", json=templates)
+    assert response.status_code == 200
+
+
+# def test_delete_entity():
+#     json_file = ConnectToJSON()
+#     templates = json_file.connect('entity_room1.json')
+#     response = requests.delete(f"{url}{api}/{templates['id']}")
+#     assert response.status_code == 204
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# def test_get_check_content_type_equals_json():
     #     response = requests.get(url + api)
     #     assert response.headers['Content-Type'] == "application/json"
     #
