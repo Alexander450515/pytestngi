@@ -6,11 +6,20 @@ import json
 api = "/v2/entities"
 url = "http://172.26.66.74:1026"
 
+# json_file = ConnectToJSON()
+# templates = json_file.open_json('entity_room.json')
+
+
+def setup_module(json):
+    json_file = ConnectToJSON()
+    templates = json_file.open_json(json)
+    return templates
+
 
 def test_create_entity():
-    json_file = ConnectToJSON()
-    templates = json_file.connect('entity_room.json')
     # POST запрос /v2/entities
+    templates = setup_module('entity_room.json')
+
     response = requests.post(f"{url}{api}", json=templates)
     assert response.status_code in (201, 204)
     # Проверка корректности создания /v2/entities/{entityId}
@@ -44,12 +53,12 @@ def test_create_entity():
 
 
 def test_replace_all_entity_attributes():
-    json_file = ConnectToJSON()
-    templates = json_file.connect('entity_room.json')
+    templates = setup_module('entity_room.json')
+
     response = requests.post(f"{url}{api}", json=templates)
     assert response.status_code in (201, 204)
-    json_file_for_replace = ConnectToJSON()
-    templates_for_replace = json_file_for_replace.connect('entity_room_replace.json')
+
+    templates_for_replace = setup_module('entity_room_replace.json')
     response = requests.put(f"{url}{api}/{templates['id']}/attrs", json=templates_for_replace)
     assert response.status_code == 204
     # Проверка замены атрибутов
@@ -66,12 +75,12 @@ def test_replace_all_entity_attributes():
 
 
 def test_update_or_append_entity_attributes():
-    json_file = ConnectToJSON()
-    templates = json_file.connect('entity_room.json')
+    templates = setup_module('entity_room.json')
+
     response = requests.post(f"{url}{api}", json=templates)
     assert response.status_code in (201, 204)
-    json_file_for_append = ConnectToJSON()
-    templates_for_append = json_file_for_append.connect('entity_room_append.json')
+
+    templates_for_append = setup_module('entity_room_update_or_append.json')
     # POST запрос /v2/entities/{entityId}/attrs
     # Update or Append Entity Attributes
     response = requests.post(f"{url}{api}/{templates['id']}/attrs", json=templates_for_append)
@@ -84,11 +93,6 @@ def test_update_or_append_entity_attributes():
     assert response.status_code == 204
     response = requests.get(f"{url}{api}/{templates['id']}/attrs")
     assert response.status_code == 404
-
-
-
-
-
 
 # def test_delete_entity():
 #     json_file = ConnectToJSON()
