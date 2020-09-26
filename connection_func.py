@@ -2,9 +2,6 @@ import json
 
 
 class ConnectToJSON:
-    def __init__(self):
-        self.__data = None
-
     def connect(self, data_file):
         with open(data_file) as json_file:
             return json.load(json_file)

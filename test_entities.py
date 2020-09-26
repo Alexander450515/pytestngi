@@ -37,11 +37,17 @@ def test_create_entity():
     assert response_body["location"]["value"] == templates["location"]["value"]
     assert response_body["location"]["type"] == templates["location"]["type"]
     assert response_body["location"]["metadata"]["crs"]["value"] == templates["location"]["metadata"]["crs"]["value"]
+    response = requests.delete(f"{url}{api}/{templates['id']}")
+    assert response.status_code == 204
+    response = requests.get(f"{url}{api}/{templates['id']}/attrs")
+    assert response.status_code == 404
 
 
 def test_replace_all_entity_attributes():
     json_file = ConnectToJSON()
     templates = json_file.connect('entity_room.json')
+    response = requests.post(f"{url}{api}", json=templates)
+    assert response.status_code in (201, 204)
     json_file_for_replace = ConnectToJSON()
     templates_for_replace = json_file_for_replace.connect('entity_room_replace.json')
     response = requests.put(f"{url}{api}/{templates['id']}/attrs", json=templates_for_replace)
@@ -53,11 +59,17 @@ def test_replace_all_entity_attributes():
         (type(response_body["temperature"]["value"]) in (float, int)))
     assert response_body["seatNumber"]["value"] == templates_for_replace["seatNumber"]["value"] and (
         (type(response_body["seatNumber"]["value"]) in (float, int)))
+    response = requests.delete(f"{url}{api}/{templates['id']}")
+    assert response.status_code == 204
+    response = requests.get(f"{url}{api}/{templates['id']}/attrs")
+    assert response.status_code == 404
 
 
 def test_update_or_append_entity_attributes():
     json_file = ConnectToJSON()
     templates = json_file.connect('entity_room.json')
+    response = requests.post(f"{url}{api}", json=templates)
+    assert response.status_code in (201, 204)
     json_file_for_append = ConnectToJSON()
     templates_for_append = json_file_for_append.connect('entity_room_append.json')
     # POST запрос /v2/entities/{entityId}/attrs
@@ -68,11 +80,6 @@ def test_update_or_append_entity_attributes():
     response_body = response.json()
     assert response_body["ambientNoise"]["value"] == templates_for_append["ambientNoise"]["value"] and (
         (type(response_body["ambientNoise"]["value"]) in (float, int)))
-
-
-def test_delete_entity():
-    json_file = ConnectToJSON()
-    templates = json_file.connect('entity_room.json')
     response = requests.delete(f"{url}{api}/{templates['id']}")
     assert response.status_code == 204
     response = requests.get(f"{url}{api}/{templates['id']}/attrs")
@@ -81,6 +88,15 @@ def test_delete_entity():
 
 
 
+
+
+# def test_delete_entity():
+#     json_file = ConnectToJSON()
+#     templates = json_file.connect('entity_room.json')
+#     response = requests.delete(f"{url}{api}/{templates['id']}")
+#     assert response.status_code == 204
+#     response = requests.get(f"{url}{api}/{templates['id']}/attrs")
+#     assert response.status_code == 404
 
 
 # def test_get_check_content_type_equals_json():
