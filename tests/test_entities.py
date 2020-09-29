@@ -1,4 +1,4 @@
-from connection_func import ConnectToJSON
+from connection_func import open_json
 import pytest
 import requests
 import json
@@ -21,8 +21,8 @@ def test_create_entity(url):
     # json_file = ConnectToJSON()
     # templates = json_file.open_json('entity_room.json')
     # POST запрос /v2/entities
-    json_file = ConnectToJSON()
-    templates = json_file.open_json('json_files/entity_room.json')
+    # json_file = ConnectToJSON()
+    templates = open_json('json_files/entity_room.json')
     response = requests.post(f"{url}{api}", json=templates)
     assert response.status_code in (201, 204)
     # Проверка корректности создания /v2/entities/{entityId}
