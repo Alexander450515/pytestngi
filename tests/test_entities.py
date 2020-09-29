@@ -6,7 +6,6 @@ from conftest import url
 
 
 api = "/v2/entities"
-# url = "http://172.26.66.74:1026"
 
 # @pytest.fixture(scope="module")
 # def setup_module():
