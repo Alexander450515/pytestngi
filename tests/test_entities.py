@@ -23,7 +23,7 @@ def test_create_entity(url):
     # templates = json_file.open_json('entity_room.json')
     # POST запрос /v2/entities
     json_file = ConnectToJSON()
-    templates = json_file.open_json('entity_room.json')
+    templates = json_file.open_json('json_files/entity_room.json')
     response = requests.post(f"{url}{api}", json=templates)
     assert response.status_code in (201, 204)
     # Проверка корректности создания /v2/entities/{entityId}
