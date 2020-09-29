@@ -7,7 +7,6 @@ from conftest import url
 api = "/v2/entities"
 
 
-
 def test_create_entity(url):
     # Создание
     templates = open_json('json_files/entity_room.json')
