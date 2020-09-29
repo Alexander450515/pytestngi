@@ -18,14 +18,10 @@ api = "/v2/entities"
 
 
 def test_create_entity(url):
-    # json_file = ConnectToJSON()
-    # templates = json_file.open_json('entity_room.json')
-    # POST запрос /v2/entities
-    # json_file = ConnectToJSON()
+    # Создание
     templates = open_json('json_files/entity_room.json')
     response = requests.post(f"{url}{api}", json=templates)
     assert response.status_code in (201, 204)
-    # Проверка корректности создания /v2/entities/{entityId}
     response = requests.get(f"{url}{api}/{templates['id']}")
     assert response.status_code == 200
     response_body = response.json()
@@ -49,6 +45,7 @@ def test_create_entity(url):
     assert response_body["location"]["value"] == templates["location"]["value"]
     assert response_body["location"]["type"] == templates["location"]["type"]
     assert response_body["location"]["metadata"]["crs"]["value"] == templates["location"]["metadata"]["crs"]["value"]
+    # Удаление
     response = requests.delete(f"{url}{api}/{templates['id']}")
     assert response.status_code == 204
     response = requests.get(f"{url}{api}/{templates['id']}/attrs")
@@ -57,13 +54,11 @@ def test_create_entity(url):
 
 
 # def test_replace_all_entity_attributes():
-#     json_file = ConnectToJSON()
-#     templates = json_file.open_json('entity_room.json')
+#     templates = open_json('json_files/entity_room.json')
 #
 #     response = requests.post(f"{url}{api}", json=templates)
 #     assert response.status_code in (201, 204)
-#     json_file_for_replace = ConnectToJSON()
-#     templates_for_replace = json_file.open_json('entity_room_replace.json')
+#     templates_for_replace = open_json('json_files/entity_room_replace.json')
 #     response = requests.put(f"{url}{api}/{templates['id']}/attrs", json=templates_for_replace)
 #     assert response.status_code == 204
 #     # Проверка замены атрибутов
