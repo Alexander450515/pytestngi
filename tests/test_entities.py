@@ -4,17 +4,8 @@ import requests
 import json
 from conftest import url
 
-
 api = "/v2/entities"
 
-# @pytest.fixture(scope="module")
-# def setup_module():
-#     json_file = ConnectToJSON()
-#     templates = json_file.open_json('entity_room.json')
-#     return templates
-#
-#
-# print(setup_module())
 
 
 def test_create_entity(url):
