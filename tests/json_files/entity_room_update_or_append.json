@@ -1,5 +1,8 @@
 {
   "ambientNoise": {
     "value": 31.5
+  },
+    "humidity": {
+    "value": 120
   }
 }
