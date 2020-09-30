@@ -6,7 +6,7 @@ import json
 api = "/v2/entities"
 templates_to_try = (
     'json_files/entity_room.json',
-    'json_files/entity_room_1.json'
+    # 'json_files/entity_room_1.json'
 )
 
 
@@ -19,50 +19,45 @@ def test_create_entity(url, templates):
     response = requests.get(f"{url}{api}/{templates['id']}")
     assert response.status_code == 200
     response_body = response.json()
-    assert response_body["type"] == templates["type"]
-    assert response_body["id"] == templates["id"]
-    assert response_body["temperature"]["value"] == templates["temperature"]["value"] and (
-        (type(response_body["temperature"]["value"]) in (float, int)))
-    assert response_body["humidity"]["value"] == templates["humidity"]["value"] and (
-            (type(templates["humidity"]["value"])) in (float, int))
-    assert response_body["location"]["value"] == templates["location"]["value"]
-    assert response_body["location"]["type"] == templates["location"]["type"]
-    assert response_body["location"]["metadata"]["crs"]["value"] == templates["location"]["metadata"]["crs"]["value"]
+    for key in templates:
+        if key in ('id', 'type'):
+            assert response_body[key] == templates[key]
+        else:
+            assert response_body[key]['value'] == templates[key]['value']
     # Проверка корректности создания /v2/entities/{entityId}/attrs
     response = requests.get(f"{url}{api}/{templates['id']}/attrs")
     assert response.status_code == 200
     response_body = response.json()
-    assert response_body["temperature"]["value"] == templates["temperature"]["value"] and (
-        (type(response_body["temperature"]["value"]) in (float, int)))
-    assert response_body["humidity"]["value"] == templates["humidity"]["value"] and (
-            (type(templates["humidity"]["value"])) in (float, int))
-    assert response_body["location"]["value"] == templates["location"]["value"]
-    assert response_body["location"]["type"] == templates["location"]["type"]
-    assert response_body["location"]["metadata"]["crs"]["value"] == templates["location"]["metadata"]["crs"]["value"]
+    for key in templates:
+        if key in ('id', 'type'):
+            continue
+        assert response_body[key]['value'] == templates[key]['value']
     # Удаление
     response = requests.delete(f"{url}{api}/{templates['id']}")
     assert response.status_code == 204
     response = requests.get(f"{url}{api}/{templates['id']}/attrs")
     assert response.status_code == 404
 
-# def test_replace_all_entity_attributes(url):
-#     templates = open_json('json_files/entity_room.json')
-#     response = requests.post(f"{url}{api}", json=templates)
-#     assert response.status_code in (201, 204)
-#     templates_for_replace = open_json('json_files/entity_room_replace.json')
-#     response = requests.put(f"{url}{api}/{templates['id']}/attrs", json=templates_for_replace)
-#     assert response.status_code == 204
-#     # Проверка замены атрибутов
-#     response = requests.get(f"{url}{api}/{templates['id']}/attrs")
-#     response_body = response.json()
-#     assert response_body["temperature"]["value"] == templates_for_replace["temperature"]["value"] and (
-#         (type(response_body["temperature"]["value"]) in (float, int)))
-#     assert response_body["seatNumber"]["value"] == templates_for_replace["seatNumber"]["value"] and (
-#         (type(response_body["seatNumber"]["value"]) in (float, int)))
-#     response = requests.delete(f"{url}{api}/{templates['id']}")
-#     assert response.status_code == 204
-#     response = requests.get(f"{url}{api}/{templates['id']}/attrs")
-#     assert response.status_code == 404
+
+@pytest.mark.parametrize("templates", templates_to_try)
+def test_replace_all_entity_attributes(url, templates):
+    templates = open_json(templates)
+    response = requests.post(f"{url}{api}", json=templates)
+    assert response.status_code in (201, 204)
+    templates_for_replace = open_json('json_files/entity_room_replace.json')
+    response = requests.put(f"{url}{api}/{templates['id']}/attrs", json=templates_for_replace)
+    assert response.status_code == 204
+    # Проверка замены атрибутов
+    response = requests.get(f"{url}{api}/{templates['id']}/attrs")
+    response_body = response.json()
+    assert response_body["temperature"]["value"] == templates_for_replace["temperature"]["value"] and (
+        (type(response_body["temperature"]["value"]) in (float, int)))
+    assert response_body["seatNumber"]["value"] == templates_for_replace["seatNumber"]["value"] and (
+        (type(response_body["seatNumber"]["value"]) in (float, int)))
+    response = requests.delete(f"{url}{api}/{templates['id']}")
+    assert response.status_code == 204
+    response = requests.get(f"{url}{api}/{templates['id']}/attrs")
+    assert response.status_code == 404
 #
 #
 # def test_update_or_append_entity_attributes(url):

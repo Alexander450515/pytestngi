@@ -1,19 +1,24 @@
 {
-  "type": "car",
-  "id": "d12312",
-  "temperature": {
-    "value": 21.7
+  'id': 'd12312',
+  'type': 'car',
+  'humidity': {
+    'type': 'Number',
+    'value': 60,
+    'metadata': {}
   },
-  "humidity": {
-    "value": 60
-  },
-  "location": {
-    "value": "41.3763726, 2.1864475",
-    "type": "geo:point",
-    "metadata": {
-      "crs": {
-        "value": "WGS84"
+  'location': {
+    'type': 'geo:point',
+    'value': '41.3763726, 2.1864475',
+    'metadata': {
+      'crs': {
+        'type': 'Text',
+        'value': 'WGS84'
       }
     }
+  },
+  'temperature': {
+    'type': 'Number',
+    'value': 21.7,
+    'metadata': {}
   }
 }
