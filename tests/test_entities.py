@@ -9,7 +9,8 @@ templates_to_try = [
     # ("templates", "templates_for_replace", "templates_for_append")
     ('json_files/entity_room.json', 'json_files/entity_room_replace.json',
      'json_files/entity_room_update_or_append.json'),
-    # ('json_files/entity_room_1.json',)
+    ('json_files/entity_room_1.json', 'json_files/entity_room_replace_1.json',
+     'json_files/entity_room_update_or_append_1.json'),
 ]
 
 
