@@ -4,14 +4,17 @@ import requests
 import json
 
 api = "/v2/entities"
-templates_to_try = (
-    'json_files/entity_room.json',
-    # 'json_files/entity_room_1.json'
-)
+
+templates_to_try = [
+    # "templates", "templates_for_replace", "templates_for_append"
+    ('json_files/entity_room.json', 'json_files/entity_room_replace.json',
+     'json_files/entity_room_update_or_append.json'),
+    # ('json_files/entity_room_1.json',)
+]
 
 
-@pytest.mark.parametrize("templates", templates_to_try)
-def test_create_entity(url, templates):
+@pytest.mark.parametrize(("templates", "templates_for_replace", "templates_for_append"), templates_to_try)
+def test_create_entity(url, templates, templates_for_replace, templates_for_append):
     # Создание
     templates = open_json(templates)
     response = requests.post(f"{url}{api}", json=templates)
@@ -39,51 +42,44 @@ def test_create_entity(url, templates):
     assert response.status_code == 404
 
 
-@pytest.mark.parametrize("templates", templates_to_try)
-def test_replace_all_entity_attributes(url, templates):
+@pytest.mark.parametrize(("templates", "templates_for_replace", "templates_for_append"), templates_to_try)
+def test_replace_all_entity_attributes(url, templates, templates_for_replace, templates_for_append):
     templates = open_json(templates)
     response = requests.post(f"{url}{api}", json=templates)
     assert response.status_code in (201, 204)
-    templates_for_replace = open_json('json_files/entity_room_replace.json')
+    templates_for_replace = open_json(templates_for_replace)
     response = requests.put(f"{url}{api}/{templates['id']}/attrs", json=templates_for_replace)
     assert response.status_code == 204
     # Проверка замены атрибутов
     response = requests.get(f"{url}{api}/{templates['id']}/attrs")
     response_body = response.json()
-    assert response_body["temperature"]["value"] == templates_for_replace["temperature"]["value"] and (
-        (type(response_body["temperature"]["value"]) in (float, int)))
-    assert response_body["seatNumber"]["value"] == templates_for_replace["seatNumber"]["value"] and (
-        (type(response_body["seatNumber"]["value"]) in (float, int)))
+    for key in templates_for_replace:
+        assert response_body[key]['value'] == templates_for_replace[key]['value']
+    # Удаление
     response = requests.delete(f"{url}{api}/{templates['id']}")
     assert response.status_code == 204
     response = requests.get(f"{url}{api}/{templates['id']}/attrs")
     assert response.status_code == 404
-#
-#
-# def test_update_or_append_entity_attributes(url):
-#     # templates = setup_module('entity_room.json')
-#     json_file = ConnectToJSON()
-#     templates = json_file.open_json('entity_room.json')
-#
-#     response = requests.post(f"{url}{api}", json=templates)
-#     assert response.status_code in (201, 204)
-#
-#     json_file_for_append = ConnectToJSON()
-#     templates_for_append = json_file_for_append.open_json('entity_room_update_or_append.json')
-#
-#     # templates_for_append = setup_module('entity_room_update_or_append.json')
-#     # POST запрос /v2/entities/{entityId}/attrs
-#     # Update or Append Entity Attributes
-#     response = requests.post(f"{url}{api}/{templates['id']}/attrs", json=templates_for_append)
-#     assert response.status_code == 204
-#     response = requests.get(f"{url}{api}/{templates['id']}/attrs")
-#     response_body = response.json()
-#     assert response_body["ambientNoise"]["value"] == templates_for_append["ambientNoise"]["value"] and (
-#         (type(response_body["ambientNoise"]["value"]) in (float, int)))
-#     response = requests.delete(f"{url}{api}/{templates['id']}")
-#     assert response.status_code == 204
-#     response = requests.get(f"{url}{api}/{templates['id']}/attrs")
-#     assert response.status_code == 404
+
+
+@pytest.mark.parametrize(("templates", "templates_for_replace", "templates_for_append"), templates_to_try)
+def test_update_or_append_entity_attributes(url, templates, templates_for_replace, templates_for_append):
+    templates = open_json(templates)
+    response = requests.post(f"{url}{api}", json=templates)
+    assert response.status_code in (201, 204)
+    # Update or Append Entity Attributes
+    templates_for_append = open_json(templates_for_append)
+    response = requests.post(f"{url}{api}/{templates['id']}/attrs", json=templates_for_append)
+    assert response.status_code == 204
+    response = requests.get(f"{url}{api}/{templates['id']}/attrs")
+    response_body = response.json()
+    for key in templates_for_append:
+        assert response_body[key]['value'] == templates_for_append[key]['value']
+    # Удаление
+    response = requests.delete(f"{url}{api}/{templates['id']}")
+    assert response.status_code == 204
+    response = requests.get(f"{url}{api}/{templates['id']}/attrs")
+    assert response.status_code == 404
 
 
 # def test_delete_entity():
