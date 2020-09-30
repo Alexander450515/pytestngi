@@ -2,14 +2,18 @@ from connection_func import open_json
 import pytest
 import requests
 import json
-from conftest import url
 
 api = "/v2/entities"
+templates_to_try = (
+    'json_files/entity_room.json',
+    'json_files/entity_room_1.json'
+)
 
 
-def test_create_entity(url):
+@pytest.mark.parametrize("templates", templates_to_try)
+def test_create_entity(url, templates):
     # Создание
-    templates = open_json('json_files/entity_room.json')
+    templates = open_json(templates)
     response = requests.post(f"{url}{api}", json=templates)
     assert response.status_code in (201, 204)
     response = requests.get(f"{url}{api}/{templates['id']}")
@@ -41,11 +45,8 @@ def test_create_entity(url):
     response = requests.get(f"{url}{api}/{templates['id']}/attrs")
     assert response.status_code == 404
 
-
-
-# def test_replace_all_entity_attributes():
+# def test_replace_all_entity_attributes(url):
 #     templates = open_json('json_files/entity_room.json')
-#
 #     response = requests.post(f"{url}{api}", json=templates)
 #     assert response.status_code in (201, 204)
 #     templates_for_replace = open_json('json_files/entity_room_replace.json')
@@ -64,7 +65,7 @@ def test_create_entity(url):
 #     assert response.status_code == 404
 #
 #
-# def test_update_or_append_entity_attributes():
+# def test_update_or_append_entity_attributes(url):
 #     # templates = setup_module('entity_room.json')
 #     json_file = ConnectToJSON()
 #     templates = json_file.open_json('entity_room.json')
@@ -88,7 +89,6 @@ def test_create_entity(url):
 #     assert response.status_code == 204
 #     response = requests.get(f"{url}{api}/{templates['id']}/attrs")
 #     assert response.status_code == 404
-
 
 
 # def test_delete_entity():
