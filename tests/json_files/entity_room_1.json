@@ -1,24 +1,19 @@
 {
-  'id': 'd12312',
-  'type': 'car',
-  'humidity': {
-    'type': 'Number',
-    'value': 60,
-    'metadata': {}
+  "type": "room",
+  "id": "123asd",
+  "temperature": {
+    "value": 12.3
   },
-  'location': {
-    'type': 'geo:point',
-    'value': '41.3763726, 2.1864475',
-    'metadata': {
-      'crs': {
-        'type': 'Text',
-        'value': 'WGS84'
+  "humidity": {
+    "value": 12
+  },
+  "location": {
+    "value": "11.3711426, 1.1862215",
+    "type": "geo:point",
+    "metadata": {
+      "crs": {
+        "value": "WGS100"
       }
     }
-  },
-  'temperature': {
-    'type': 'Number',
-    'value': 21.7,
-    'metadata': {}
   }
 }
